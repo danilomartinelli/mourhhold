@@ -1,11 +1,11 @@
 //! Asset-loading scaffold.
 //!
-//! On entering [`GameState::Loading`] this loads the tile atlas and the player's
-//! paperdoll layer sheets, builds their [`TextureAtlasLayout`]s, and stores every
-//! handle in [`GameAssets`]. Once all images have finished loading it advances to
-//! [`GameState::Playing`], where [`crate::world`] and [`crate::character`] consume
-//! the handles. Geometry constants for both atlases live here as the single source
-//! of truth.
+//! On entering [`GameState::Loading`] this loads the tile atlas, the player's
+//! paperdoll layer sheets, and the GUI/HUD kit, builds the atlas
+//! [`TextureAtlasLayout`]s, and stores every handle in [`GameAssets`]. Once all
+//! images have finished loading it advances to [`GameState::Playing`], where
+//! [`crate::world`] and [`crate::character`] consume the handles. Geometry
+//! constants for both atlases live here as the single source of truth.
 
 use bevy::prelude::*;
 use mourhhold_core::GameState;
@@ -30,6 +30,11 @@ pub(crate) const CHAR_ROWS: u32 = 31;
 /// bracket-free "down" frame). `row * CHAR_COLS + col` = `1 * 33 + 2`.
 pub(crate) const PLAYER_IDLE_DOWN: usize = CHAR_COLS as usize + 2;
 
+/// Heterogeneous GUI/HUD kit (panels, sliders, hearts, mana orbs, input prompts)
+/// laid out on a 16 px base unit. Loaded for the upcoming HUD; not a uniform grid,
+/// so callers select sub-rects via [`Sprite::rect`] rather than a layout.
+const GUI_KIT_PATH: &str = "ui/menu_gui_hud/raven_fantasy_gui_starter_set.png";
+
 /// Player paperdoll layers, ordered **back-to-front** to match the art pack's
 /// "HOW TO USE" layering: the cape sits behind the body and hair draws last.
 const PLAYER_LAYER_PATHS: &[&str] = &[
@@ -53,6 +58,8 @@ pub(crate) struct GameAssets {
     pub(crate) char_layout: Handle<TextureAtlasLayout>,
     /// Player paperdoll layer images, ordered back (drawn first) to front.
     pub(crate) player_layers: Vec<Handle<Image>>,
+    /// The GUI/HUD kit sheet (see [`GUI_KIT_PATH`]).
+    pub(crate) gui: Handle<Image>,
 }
 
 /// Loads assets during [`GameState::Loading`] and transitions to
@@ -92,6 +99,7 @@ fn load_assets(
         tile_layout,
         char_layout,
         player_layers,
+        gui: asset_server.load(GUI_KIT_PATH),
     });
 }
 
@@ -101,6 +109,7 @@ fn finish_loading(
     mut next_state: ResMut<NextState<GameState>>,
 ) {
     let ready = asset_server.is_loaded_with_dependencies(assets.tiles.id())
+        && asset_server.is_loaded_with_dependencies(assets.gui.id())
         && assets
             .player_layers
             .iter()

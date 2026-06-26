@@ -69,12 +69,21 @@ defaults).
 
 ## Assets
 
-Assets live at the **workspace root** `assets/` (tiles, items, icons, ui, audio),
-not per-crate. Bevy resolves its asset folder from `BEVY_ASSET_ROOT`, falling
-back to the running crate's `CARGO_MANIFEST_DIR` — which in this workspace would
-wrongly point at `crates/mourhhold/assets`. `.cargo/config.toml` pins
+Assets live at the **workspace root** `assets/` (tiles, characters, icons, ui,
+audio), not per-crate. Bevy resolves its asset folder from `BEVY_ASSET_ROOT`,
+falling back to the running crate's `CARGO_MANIFEST_DIR` — which in this workspace
+would wrongly point at `crates/mourhhold/assets`. `.cargo/config.toml` pins
 `BEVY_ASSET_ROOT` to the workspace root to fix this; keep it, and load assets by
 paths relative to `assets/` (e.g. `asset_server.load("tiles/terrain/...png")`).
+
+Asset file/dir names are **`snake_case`** (lowercase, no spaces/parens/commas);
+keep new drops in that form. `icons/` holds icon bundles (each as `16x16`/`32x32`/
+`64x64` sheets, e.g. `attributes_skills_spells_scores`); `ui/` holds GUI/HUD
+sheets — `ui/menu_gui_hud/raven_fantasy_gui_starter_set.png` is a heterogeneous
+16 px-unit kit (panels, sliders, hearts, mana orbs, input prompts), so it is
+loaded as a plain texture and sampled via `Sprite::rect`, not a `TextureAtlasLayout`.
+New asset paths are wired into [`crates/mourhhold/src/assets.rs`](crates/mourhhold/src/assets.rs)
+(`GameAssets` + its `Loading`→`Playing` readiness check).
 
 ## Conventions
 
