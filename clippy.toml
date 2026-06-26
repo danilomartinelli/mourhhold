@@ -1,0 +1,4 @@
+# Bevy components and enums get large; keep the `enum_variant_names` and size
+# lints pragmatic for a game codebase.
+too-many-arguments-threshold = 10
+type-complexity-threshold = 500

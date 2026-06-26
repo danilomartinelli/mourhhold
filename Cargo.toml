@@ -1,0 +1,62 @@
+[workspace]
+resolver = "3"
+members = ["crates/*"]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.96"
+license = "MIT OR Apache-2.0"
+authors = ["Danilo Martinelli <danilomartinelli429@gmail.com>"]
+repository = "https://github.com/danilomartinelli/mourhhold"
+readme = "README.md"
+
+[workspace.dependencies]
+# Internal crates
+mourhhold_core = { path = "crates/mourhhold_core", version = "0.1.0" }
+
+# Bevy 0.19 — pulled from the workspace so every crate stays in lockstep.
+# Default features ON: the game binary wants the full standard plugin set
+# (render, audio, text, UI, gizmos, ...). The headless `core` crate opts out of
+# defaults locally to stay cheap to compile and test.
+bevy = { version = "0.19" }
+
+# Strict, but Bevy-aware. `pedantic` + `nursery` are on at `warn`; CI promotes
+# warnings to errors (`-D warnings`). The allows below silence lints that fire
+# constantly on idiomatic ECS code and would otherwise be pure noise.
+[workspace.lints.rust]
+unsafe_code = "deny"
+unused_imports = "warn"
+unreachable_pub = "warn"
+
+[workspace.lints.clippy]
+all = { level = "warn", priority = -1 }
+pedantic = { level = "warn", priority = -1 }
+nursery = { level = "warn", priority = -1 }
+# Idiomatic Bevy systems take `Res`/`Query` by value and have wide signatures.
+type_complexity = "allow"
+too_many_arguments = "allow"
+needless_pass_by_value = "allow"
+module_name_repetitions = "allow"
+redundant_pub_crate = "allow"
+# Keep `nursery` from being overzealous on game loops.
+significant_drop_tightening = "allow"
+# Grid/screen-space math casts freely between i32 and f32; the coordinate ranges
+# involved make truncation/precision loss a non-issue. Annotating every cast
+# would be pure noise, so allow these two pedantic lints workspace-wide.
+cast_precision_loss = "allow"
+cast_possible_truncation = "allow"
+
+# Compile dependencies (incl. Bevy) with optimizations even in dev builds, so
+# iteration stays fast without optimizing our own slow-to-compile crates.
+[profile.dev]
+opt-level = 1
+
+[profile.dev.package."*"]
+opt-level = 3
+
+# Release profile tuned for a shipped game binary.
+[profile.release]
+codegen-units = 1
+lto = "thin"
+strip = true

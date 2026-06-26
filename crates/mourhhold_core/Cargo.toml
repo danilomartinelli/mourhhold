@@ -1,0 +1,21 @@
+[package]
+name = "mourhhold_core"
+description = "Core gameplay components, resources, and systems for Mourhhold."
+version = "0.1.0"
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
+readme.workspace = true
+
+[dependencies]
+# Declared directly (not inherited) so it can opt out of Bevy's default features:
+# Cargo forbids a member from overriding the workspace dep's `default-features`.
+# This keeps `core` to ECS + math + state — no render backend — so isolated
+# `cargo test -p mourhhold_core` stays cheap and headless. In a full workspace
+# build Cargo unifies these with the binary's default features anyway.
+bevy = { version = "0.19", default-features = false, features = ["bevy_state"] }
+
+[lints]
+workspace = true

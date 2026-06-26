@@ -1,0 +1,31 @@
+[package]
+name = "mourhhold"
+description = "Mourhhold — a Top-Down 2D RPG built with Bevy."
+version = "0.1.0"
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+authors.workspace = true
+repository.workspace = true
+readme.workspace = true
+
+[[bin]]
+name = "mourhhold"
+path = "src/main.rs"
+
+[dependencies]
+mourhhold_core.workspace = true
+# Full default plugin set (render, audio, text, UI, png, multithreading, ...).
+bevy = { workspace = true }
+
+# Defaults already include the X11 backend; add Wayland too on Linux.
+[target.'cfg(target_os = "linux")'.dependencies]
+bevy = { workspace = true, features = ["wayland"] }
+
+# Fast iteration: hot-recompile the game crate while Bevy stays a dynamic lib.
+# Never ship this feature in release builds — the CI/release pipeline omits it.
+[features]
+dev = ["bevy/dynamic_linking", "bevy/bevy_dev_tools"]
+
+[lints]
+workspace = true

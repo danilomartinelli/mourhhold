@@ -1,0 +1,8 @@
+# Bevy resolves its `assets/` folder relative to BEVY_ASSET_ROOT (falling back
+# to each crate's CARGO_MANIFEST_DIR). In a Cargo workspace that fallback points
+# at `crates/mourhhold/assets`, but our assets live at the workspace root. Pin
+# the asset root to this config file's directory (the workspace root) so assets
+# resolve correctly regardless of the current working directory or which crate
+# is run.
+[env]
+BEVY_ASSET_ROOT = { value = ".", relative = true }

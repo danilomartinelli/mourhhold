@@ -1,0 +1,35 @@
+# cargo-deny configuration — run via `cargo deny check`.
+# Gates licenses, security advisories, and dependency hygiene in CI.
+
+[advisories]
+version = 2
+yanked = "deny"
+# Add specific advisory IDs here (with a justification) only when unavoidable.
+ignore = []
+
+[licenses]
+version = 2
+# Permissive licenses compatible with shipping a dual-licensed game.
+allow = [
+    "MIT",
+    "MIT-0",
+    "Apache-2.0",
+    "Apache-2.0 WITH LLVM-exception",
+    "BSD-2-Clause",
+    "BSD-3-Clause",
+    "Zlib",
+    "ISC",
+    "Unicode-3.0",
+    "CC0-1.0",
+    "MPL-2.0",
+]
+confidence-threshold = 0.9
+
+[bans]
+multiple-versions = "warn"
+wildcards = "deny"
+
+[sources]
+unknown-registry = "deny"
+unknown-git = "deny"
+allow-registry = ["https://github.com/rust-lang/crates.io-index"]

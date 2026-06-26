@@ -1,0 +1,15 @@
+{
+  "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json",
+  "release-type": "rust",
+  "include-component-in-tag": true,
+  "separate-pull-requests": false,
+  "packages": {
+    "crates/mourhhold": {
+      "component": "mourhhold"
+    },
+    "crates/mourhhold_core": {
+      "component": "mourhhold_core"
+    }
+  },
+  "plugins": ["cargo-workspace"]
+}
